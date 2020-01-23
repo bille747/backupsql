@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.16
+FROM ubuntu:latest
 ENV DEBIAN_FRONTEND noninteractive
 
 
@@ -10,7 +10,7 @@ RUN chown -R nobody:users /home
 
 # Install Dependencies
 RUN apt-get update -q
-RUN apt-get install -qy mariadb-client
+RUN apt-get install -qy mysql-client
 
 # Create docker folders
 RUN mkdir /config 
