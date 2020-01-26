@@ -9,8 +9,12 @@ RUN usermod -d /home nobody
 RUN chown -R nobody:users /home
 
 # Install Dependencies
-RUN apt-get update -q && apt-get upgrade -y
-RUN apt-get install -qy mysql-client cron tzdata
+RUN apt-get update -q && apt-get install -qy \
+    mysql-client \ 
+    cron \ 
+    tzdata \ 
+    pv \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create docker folders
 RUN mkdir /config 
