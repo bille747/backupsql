@@ -9,8 +9,8 @@ RUN usermod -d /home nobody
 RUN chown -R nobody:users /home
 
 # Install Dependencies
-RUN apt-get update -q
-RUN apt-get install -qy mysql-client
+RUN apt-get update -q && apt-get upgrade -y
+RUN apt-get install -qy mysql-client cron tzdata
 
 # Create docker folders
 RUN mkdir /config 
@@ -28,3 +28,9 @@ RUN chmod +x /config/cronjob
 # Add firstrun.sh to execute during container startup, changes mysql host settings.
 ADD firstrun.sh /etc/my_init.d/firstrun.sh
 RUN chmod +x /etc/my_init.d/firstrun.sh
+
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
+
+# Run the command on container startup
+CMD /etc/my_init.d/firstrun.sh && cron && tail -f /var/log/cron.log

@@ -1,22 +1,15 @@
 #!/bin/bash
 DATE=$(date)
-mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --all-databases | gzip > /backup/MyDatabase_$(date +%Y-%m-%d).sql.gz
+echo "Starting backup process!"
+mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --all-databases --single-transaction | gzip > /backup/MyDatabase_$(date +%Y-%m-%d).sql.gz
 
 #http://scratching.psybermonkey.net/2011/01/bash-how-to-check-exit-status-of-pipe.html
 if [ ${PIPESTATUS[0]} -ne "0" ];
 then
-    #echo "the command \"mysqldump\" failed with Error: ${PIPESTATUS[0]}";
-    #exit 1;
-   curl -s -k -X POST --header "Authorization: Bearer TOKEN" \
-   --header  'Content-Type: application/json' \
-   -d "{\"type\": \"note\", \"title\": \"MySQL Backup failed with error: ${PIPESTATUS[0]}\", \"body\": \"$DATE\"}" \
-   https://api.pushbullet.com/v2/pushes;
+   echo "the command \"mysqldump\" failed with Error: ${PIPESTATUS[0]}";
    exit 1;   
 else
-   curl -s -k -X POST --header "Authorization: Bearer TOKEN" \
-   --header  'Content-Type: application/json' \
-   -d "{\"type\": \"note\", \"title\": \"MySQL Backup complete\", \"body\": \"$DATE\"}" \
-   https://api.pushbullet.com/v2/pushes;
+   echo "MySQL Backup completed! $DATE";
 fi
 
 
