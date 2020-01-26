@@ -1,7 +1,7 @@
 #!/bin/bash
 DATE=$(date)
 echo "[$(date +%Y-%m-%d_%T)] - Starting backup process!" >> /var/log/cron.log
-mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables -e --all-databases | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%H.%M.%S).sql.gz
+mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables -e --all-databases | pv -tab | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%H.%M.%S).sql.gz
 
 #http://scratching.psybermonkey.net/2011/01/bash-how-to-check-exit-status-of-pipe.html
 if [ ${PIPESTATUS[0]} -ne "0" ];
