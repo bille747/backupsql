@@ -1,15 +1,15 @@
 #!/bin/bash
 DATE=$(date)
-echo "Starting backup process!"
-mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables --all-databases | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%T).sql.gz
+echo "[$(date +%Y-%m-%d_%T)] - Starting backup process!" >> /var/log/cron.log
+mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables -e --all-databases | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%H.%M.%S).sql.gz
 
 #http://scratching.psybermonkey.net/2011/01/bash-how-to-check-exit-status-of-pipe.html
 if [ ${PIPESTATUS[0]} -ne "0" ];
 then
-   echo "the command \"mysqldump\" failed with Error: ${PIPESTATUS[0]}";
+   echo "[$(date +%Y-%m-%d_%T)] - MySQL database backup failed with Error: ${PIPESTATUS[0]}" >> /var/log/cron.log;
    exit 1;   
 else
-   echo "MySQL Backup completed! $DATE";
+   echo "[$(date +%Y-%m-%d_%T)] - MySQL Backup completed!" >> /var/log/cron.log;
 fi
 
 
