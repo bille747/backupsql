@@ -1,7 +1,7 @@
 #!/bin/bash
 DATE=$(date)
 echo "Starting backup process!"
-mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --all-databases --single-transaction | gzip > /backup/MyDatabase_$(date +%Y-%m-%d).sql.gz
+mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables --all-databases | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%T).sql.gz
 
 #http://scratching.psybermonkey.net/2011/01/bash-how-to-check-exit-status-of-pipe.html
 if [ ${PIPESTATUS[0]} -ne "0" ];
@@ -23,5 +23,3 @@ find /backup/My* -mtime +BACKUPCOPIES -exec rm {} \;
 
 #https://github.com/dockerfile/mariadb/issues/3
 #TERM env variable
-
-
