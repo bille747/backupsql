@@ -1,1 +1,1 @@
-MINUTE HOUR DAYM MONTH DAYW /config/cronjob &> /dev/null
+MINUTE HOUR DAYM MONTH DAYW /config/cronjob &> /var/log/cron.log
