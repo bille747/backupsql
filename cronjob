@@ -1,7 +1,16 @@
 #!/bin/bash
 DATE=$(date)
 echo "[$(date +%Y-%m-%d_%T)] - Starting backup process!" >> /var/log/cron.log
-mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables -e --all-databases | pv -tab | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%H.%M.%S).sql.gz
+
+mysql -uSQL_userid -pSQL_pwd -hMySQLIP -N -e "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('mysql','information_schema','performance_schema', 'sys');" | while read dbname; # Get a list of DBs, excluding system.
+   do
+      echo "[$(date +%Y-%m-%d_%T)] - Backing up $dbname" >> /var/log/cron.log;
+      mkdir -p /backup/"$dbname" # Create a folder for each DBName.
+      mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction -e --skip-lock-tables --databases "$dbname" | pv -tab | gzip > /backup/"$dbname"/MyDatabase_"$dbname"_$(date +%Y-%m-%d_%H.%M.%S).sql.gz; # Perform the actual backup.
+   done
+
+# Old backup for command. Will be removed later.
+#mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables -e --all-databases | pv -tab | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%H.%M.%S).sql.gz
 
 #http://scratching.psybermonkey.net/2011/01/bash-how-to-check-exit-status-of-pipe.html
 if [ ${PIPESTATUS[0]} -ne "0" ];
@@ -14,12 +23,7 @@ fi
 
 
 ##Delete files "My*" older than BACKUPCOPIES days
-find /backup/My* -mtime +BACKUPCOPIES -exec rm {} \;
+find /backup/ -name "My*" -mtime +BACKUPCOPIES -exec rm {} \;
 
-   
-#restore databases   
-# gunzip < MyDatabase_DATE.sql.gz | mysql -uxbmc -h 192.168.0.40
-
-
-#https://github.com/dockerfile/mariadb/issues/3
-#TERM env variable
+## Old cleanup command. Will be removed later.
+#find /backup/My* -mtime +BACKUPCOPIES -exec rm {} \;
