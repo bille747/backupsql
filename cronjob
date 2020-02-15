@@ -1,12 +1,13 @@
 #!/bin/bash
 DATE=$(date)
+umask 000 #Set Umask for unraid.
 echo "[$(date +%Y-%m-%d_%T)] - Starting backup process!" >> /var/log/cron.log
 
-mysql -uSQL_userid -pSQL_pwd -hMySQLIP -N -e "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('mysql','information_schema','performance_schema', 'sys');" | while read dbname; # Get a list of DBs, excluding system.
+mysql -uSQL_userid -pSQL_pwd -hMySQLIP -N -e "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('mysql','information_schema','performance_schema', 'sys') ORDER BY schema_name;" | while read dbname; # Get a list of DBs, excluding system.
    do
       echo "[$(date +%Y-%m-%d_%T)] - Backing up $dbname" >> /var/log/cron.log;
-      mkdir -p /backup/"$dbname" # Create a folder for each DBName.
-      mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction -e --skip-lock-tables --databases "$dbname" | pv -tab | gzip > /backup/"$dbname"/MyDatabase_"$dbname"_$(date +%Y-%m-%d_%H.%M.%S).sql.gz; # Perform the actual backup.
+      sudo -u nobody mkdir -m777 -p /backup/"$dbname" # Create a folder for each DBName.
+      mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction -e --skip-lock-tables --databases "$dbname" | pv -tab | pigz > /backup/"$dbname"/MyDatabase_"$dbname"_$(date +%Y-%m-%d_%H.%M.%S).sql.gz; # Perform the actual backup.
    done
 
 # Old backup for command. Will be removed later.

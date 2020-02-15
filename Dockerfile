@@ -14,6 +14,8 @@ RUN apt-get update -q && apt-get install -qy \
     cron \ 
     tzdata \ 
     pv \
+    sudo \
+    pigz \
     && rm -rf /var/lib/apt/lists/*
 
 # Create docker folders
