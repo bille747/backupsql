@@ -30,3 +30,4 @@ This Docker Container uses the following parameters.
 |`-e "SQL_userid=mysqluser"`| The username that the container will use to login to MySQL. <br> **Note**: It is best to avoid using root as the backup user. Instead, a seperate backup user should be created with the following global privileges: "SHOW DATABASES", "SELECT", "EVENT", "LOCK TABLE"|
 |`-e "SQL_pwd=mysqlpass"`| The password for the MySQL user.|
 |`-e "BackupCopies=8"`| How many days after a backup was done should the container automatically delete.|
+|`-v "/path/to/backup/:/backup"`| The path to the backup location on your server.|
