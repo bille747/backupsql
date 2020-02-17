@@ -10,9 +10,6 @@ mysql -uSQL_userid -pSQL_pwd -hMySQLIP -N -e "SELECT schema_name FROM informatio
       mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction -e --skip-lock-tables --databases "$dbname" | pv -tab | pigz > /backup/"$dbname"/MyDatabase_"$dbname"_$(date +%Y-%m-%d_%H.%M.%S).sql.gz; # Perform the actual backup.
    done
 
-# Old backup for command. Will be removed later.
-#mysqldump -uSQL_userid -pSQL_pwd -hMySQLIP --single-transaction --skip-lock-tables -e --all-databases | pv -tab | gzip > /backup/MyDatabase_$(date +%Y-%m-%d_%H.%M.%S).sql.gz
-
 #http://scratching.psybermonkey.net/2011/01/bash-how-to-check-exit-status-of-pipe.html
 if [ ${PIPESTATUS[0]} -ne "0" ];
 then
@@ -25,6 +22,3 @@ fi
 
 ##Delete files "My*" older than BACKUPCOPIES days
 find /backup/ -name "My*" -mtime +BACKUPCOPIES -exec rm {} \;
-
-## Old cleanup command. Will be removed later.
-#find /backup/My* -mtime +BACKUPCOPIES -exec rm {} \;
