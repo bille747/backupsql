@@ -18,7 +18,7 @@ docker run -d --name "BackupSQL" -e "TZ=America/New_York" -e "bkpMinute=0" -e "b
 # Container Parameters
 This Docker Container uses the following parameters.
 | Parameter | Function |
-|:---------:|----------|
+|:-------------------------:|----------|
 |`--name "BackupSQL"`| The name of the container. |
 |`-e "TZ=America/New_York"`| The timezone of the container. See [Wikipedia Article](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).|
 |`-e "bkpMinute=0"`| The exact minute at which the backup should run (from 0 - 59).|
